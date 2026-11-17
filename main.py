@@ -222,7 +222,9 @@ def forecast_case(case, name):
     ll = local_linear_quantiles(pool, p1)
     rq = ratio_quantiles(pool, p1)
     rows = []
-    for row in case["forecast"]:
+    # Sort by hour: the case lists hours 2..24 in order, but the output must
+    # not depend on the file's row order.
+    for row in sorted(case["forecast"], key=lambda r: r["hour"]):
         h = row["hour"]
         if h in ll and h in rq:
             qs = [math.exp(BLEND_LL * math.log(a) + (1 - BLEND_LL) * math.log(b))
